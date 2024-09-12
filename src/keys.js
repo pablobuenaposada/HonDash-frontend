@@ -3,9 +3,9 @@ const DEBUG_SCREENS = ["debug/websocket.html", "debug/raw.html"];
 
 function nextScreen(screens) {
   let path = window.location.pathname.split("/");
-  path = path.filter(e => e); // remove empty strings
+  path = path.filter((e) => e); // remove empty strings
 
-  let indexScreen = screens.findIndex(v => v.includes(path[path.length - 1]));
+  let indexScreen = screens.findIndex((v) => v.includes(path[path.length - 1]));
   indexScreen++;
   indexScreen = indexScreen % screens.length;
 
@@ -17,7 +17,7 @@ function nextScreen(screens) {
   window.location.pathname = prefix + screens[indexScreen];
 }
 
-document.addEventListener("keydown", function(event) {
+document.addEventListener("keydown", function (event) {
   if (event.key == "0") {
     ws.send(JSON.stringify({ action: "toggle_datalog" }));
   } else if (event.key == "1") {

@@ -1,3 +1,9 @@
+docker/format-check:
+	docker run --rm -v $(shell pwd):/app -w /app node:latest npx prettier --check '**/*.js'
+
+docker/format-fix:
+	docker run --rm -v $(shell pwd):/app -w /app node:latest npx prettier --write '**/*.js'
+
 docker/build:
 	docker build -t hondash-frontend .
 

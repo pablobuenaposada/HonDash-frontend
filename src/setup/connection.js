@@ -6,7 +6,7 @@ var formulaVsUnits = {
   aem_30_2012: ["celsius", "fahrenheit"],
   ebay_150_psi: ["psi", "bar"],
   bosch_0280130039_0280130026: ["celsius", "fahrenheit"],
-  custom: ["celsius", "fahrenheit", "psi", "bar", "per cent"]
+  custom: ["celsius", "fahrenheit", "psi", "bar", "per cent"],
 };
 var otherUnits = ["per cent"];
 var enabledBackgroundColorDiv = "#ddfae2";
@@ -19,7 +19,7 @@ function getElementsByXPath(xpath, parent) {
     parent || document,
     null,
     XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-    null
+    null,
   );
   for (let i = 0, length = query.snapshotLength; i < length; ++i) {
     results.push(query.snapshotItem(i));
@@ -63,7 +63,7 @@ function enforceAllowedUnits(unitsSelect, allowedUnits) {
 function checkTagValues() {
   var usedTags = [];
   var rowsPerValue = getElementsByXPath(
-    "//*[@id='editor_holder']/div/div[@class='card card-body mb-3 bg-light']/div/div/*[@class='row']"
+    "//*[@id='editor_holder']/div/div[@class='card card-body mb-3 bg-light']/div/div/*[@class='row']",
   );
 
   // fill list of used tags
@@ -72,11 +72,11 @@ function checkTagValues() {
     for (var div in divs) {
       var valueDiv = getElementsByXPath(
         "div[@class='card card-body mb-3 bg-light']",
-        divs[div]
+        divs[div],
       );
       var rowContainingTag = getElementsByXPath(
         "div/div/*[@class='row']/div[@data-schemapath[contains(., 'tag')]]",
-        valueDiv[0]
+        valueDiv[0],
       );
       for (var row in rowContainingTag) {
         var select = getElementsByXPath("div/select", rowContainingTag[row]);
@@ -98,11 +98,11 @@ function checkTagValues() {
     for (var div in divs) {
       var valueDiv = getElementsByXPath(
         "div[@class='card card-body mb-3 bg-light']",
-        divs[div]
+        divs[div],
       );
       var rowContainingTag = getElementsByXPath(
         "div/div/*[@class='row']/div[@data-schemapath[contains(., 'tag')]]",
-        valueDiv[0]
+        valueDiv[0],
       );
       for (var row in rowContainingTag) {
         var select = getElementsByXPath("div/select", rowContainingTag[row]);
@@ -124,7 +124,7 @@ function checkTagValues() {
 
 function checkDivColor() {
   var rowsPerValue = getElementsByXPath(
-    "//*[@id='editor_holder']/div/div[@class='card card-body mb-3 bg-light']/div/div/*[@class='row']"
+    "//*[@id='editor_holder']/div/div[@class='card card-body mb-3 bg-light']/div/div/*[@class='row']",
   );
 
   for (var row in rowsPerValue) {
@@ -132,7 +132,7 @@ function checkDivColor() {
     for (var div in divs) {
       var valueDiv = getElementsByXPath(
         "div[@class='card card-body mb-3 bg-light']",
-        divs[div]
+        divs[div],
       );
 
       // starting by putting all the divs in green
@@ -140,12 +140,12 @@ function checkDivColor() {
         valueDiv[0].style.setProperty(
           "background-color",
           enabledBackgroundColorDiv,
-          "important"
+          "important",
         );
       }
       var rowContainingTag = getElementsByXPath(
         "div/div/*[@class='row']/div[@data-schemapath[contains(., 'tag')]]",
-        valueDiv[0]
+        valueDiv[0],
       );
       for (var row in rowContainingTag) {
         var select = getElementsByXPath("div/select", rowContainingTag[row]);
@@ -160,7 +160,7 @@ function checkDivColor() {
           valueDiv[0].style.setProperty(
             "background-color",
             disabledBackgroundColorDiv,
-            "important"
+            "important",
           );
           var nodes = valueDiv[0].getElementsByTagName("*");
           for (var i = 0; i < nodes.length; i++) {
@@ -176,7 +176,7 @@ function checkDivColor() {
           valueDiv[0].style.setProperty(
             "background-color",
             enabledBackgroundColorDiv,
-            "important"
+            "important",
           );
           var nodes = divs[div].getElementsByTagName("*");
           for (var i = 0; i < nodes.length; i++) {
@@ -190,7 +190,7 @@ function checkDivColor() {
 
 function checkUnitValues() {
   var rowsPerValue = getElementsByXPath(
-    "//*[@id='editor_holder']/div/div[@class='card card-body mb-3 bg-light']/div/div/*[@class='row']"
+    "//*[@id='editor_holder']/div/div[@class='card card-body mb-3 bg-light']/div/div/*[@class='row']",
   );
 
   for (var row in rowsPerValue) {
@@ -198,21 +198,21 @@ function checkUnitValues() {
     for (var div in divs) {
       var valueDiv = getElementsByXPath(
         "div[@class='card card-body mb-3 bg-light']",
-        divs[div]
+        divs[div],
       );
       var rowContainingFormula = getElementsByXPath(
         "div/div/*[@class='row']/div[@data-schemapath[contains(., 'formula')]]",
-        valueDiv[0]
+        valueDiv[0],
       );
       for (var row in rowContainingFormula) {
         var select = getElementsByXPath(
           "div/select",
-          rowContainingFormula[row]
+          rowContainingFormula[row],
         );
         var selectedFormula = select[0].options[select[0].selectedIndex].label;
         var rowContainingUnit = getElementsByXPath(
           "div/div/*[@class='row']/div[@data-schemapath[contains(., 'unit')]]",
-          valueDiv[0]
+          valueDiv[0],
         );
         select = getElementsByXPath("div/select", rowContainingUnit[row]);
 
@@ -233,7 +233,7 @@ function checkUnitValues() {
 
 function checkCustomFormula() {
   var rowsPerValue = getElementsByXPath(
-    "//*[@id='editor_holder']/div/div[@class='card card-body mb-3 bg-light']/div/div/*[@class='row']"
+    "//*[@id='editor_holder']/div/div[@class='card card-body mb-3 bg-light']/div/div/*[@class='row']",
   );
 
   for (var row in rowsPerValue) {
@@ -241,15 +241,15 @@ function checkCustomFormula() {
     for (var div in divs) {
       var valueDiv = getElementsByXPath(
         "div[@class='card card-body mb-3 bg-light']",
-        divs[div]
+        divs[div],
       );
       var rowContainingFormula = getElementsByXPath(
         "div/div/*[@class='row']/div[@data-schemapath[contains(., 'formula')]]",
-        valueDiv[0]
+        valueDiv[0],
       );
       var rowContainingTag = getElementsByXPath(
         "div/div/*[@class='row']/div[@data-schemapath[contains(., 'tag')]]",
-        valueDiv[0]
+        valueDiv[0],
       );
 
       for (var row in rowContainingFormula) {
@@ -260,21 +260,21 @@ function checkCustomFormula() {
 
         var select = getElementsByXPath(
           "div/select",
-          rowContainingFormula[row]
+          rowContainingFormula[row],
         );
         var selectedFormula = select[0].options[select[0].selectedIndex].label;
         var customBoxes = [
           "min_voltage",
           "max_voltage",
           "min_value",
-          "max_value"
+          "max_value",
         ];
         for (var customBox in customBoxes) {
           var rowContainingUnit = getElementsByXPath(
             "div/div/*[@class='row']/div[@data-schemapath[contains(., '" +
               customBoxes[customBox] +
               "')]]",
-            valueDiv[0]
+            valueDiv[0],
           );
           select = getElementsByXPath("div/input", rowContainingUnit[row]);
 
@@ -341,19 +341,19 @@ function reset() {
 }
 
 fetch("../../backend/devices/setup_validator/schema.json")
-  .then(response => response.json())
-  .then(data => {
+  .then((response) => response.json())
+  .then((data) => {
     schema = data;
   }); // load json schema
 var editor;
 var ws = new WebSocket(
-  "ws://" + (window.location.hostname || "127.0.0.1") + ":5678/"
+  "ws://" + (window.location.hostname || "127.0.0.1") + ":5678/",
 );
 document
   .getElementById("file_id")
   .addEventListener("change", onFileUploaderChange);
 
-ws.onmessage = function(event) {
+ws.onmessage = function (event) {
   var data = JSON.parse(event.data);
   var keys = Object.keys(data);
 
@@ -375,13 +375,13 @@ ws.onmessage = function(event) {
 };
 
 // asks for the setup as soon as possible
-ws.onopen = function(e) {
+ws.onopen = function (e) {
   ws.send(JSON.stringify({ action: "setup" }));
 };
 // in case something blows up or connection gets close, keep trying
-ws.onerror = function(e) {
+ws.onerror = function (e) {
   location.reload();
 };
-ws.onclose = function(e) {
+ws.onclose = function (e) {
   location.reload();
 };

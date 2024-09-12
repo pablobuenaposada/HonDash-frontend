@@ -1,9 +1,9 @@
 var setup = undefined;
 var ws = new WebSocket(
-  "ws://" + (window.location.hostname || "127.0.0.1") + ":5678/"
+  "ws://" + (window.location.hostname || "127.0.0.1") + ":5678/",
 );
 
-ws.onmessage = function(event) {
+ws.onmessage = function (event) {
   var data = JSON.parse(event.data);
   var keys = Object.keys(data);
 
@@ -40,14 +40,14 @@ ws.onmessage = function(event) {
 };
 
 // asks for the setup as soon as possible
-ws.onopen = function(e) {
+ws.onopen = function (e) {
   ws.send(JSON.stringify({ action: "setup" }));
 };
 
 // in case something blows up or connection gets closed, keep trying
-ws.onerror = function(e) {
+ws.onerror = function (e) {
   location.reload();
 };
-ws.onclose = function(e) {
+ws.onclose = function (e) {
   location.reload();
 };

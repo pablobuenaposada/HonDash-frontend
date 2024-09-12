@@ -25,21 +25,21 @@ class Bar {
     this.background = this.paper.rect(this.x, this.y, this.width, this.height);
     this.background.attr({
       fill: this.backgroundColor,
-      stroke: this.backgroundColor
+      stroke: this.backgroundColor,
     });
 
     // Bar fill & stroke
     this.bar = this.paper.rect(this.x, this.y, this.width, this.height);
     this.bar.attr({
       fill: this.getFillColor(this.minValue),
-      stroke: this.getFillColor(this.minValue)
+      stroke: this.getFillColor(this.minValue),
     });
 
     // Center the text on the Bar
     this.text = this.paper.text(
       this.width / 2 + this.x,
       this.y + this.height / 2,
-      ""
+      "",
     );
 
     this.refresh(0);
@@ -64,8 +64,8 @@ class Bar {
       value > this.maxValue
         ? this.maxValue
         : value < this.minValue
-        ? this.minValue
-        : value;
+          ? this.minValue
+          : value;
 
     if (this.isVertical) {
       var color = this.getFillColor(value);
@@ -78,7 +78,7 @@ class Bar {
         y: this.y - this.newHeight + this.height,
         height: this.newHeight,
         fill: color,
-        stroke: color
+        stroke: color,
       });
     }
 
@@ -87,7 +87,7 @@ class Bar {
         "font-family": this.textFont,
         "font-size": this.textSize,
         "font-weight": this.textWeight,
-        text: value + this.suffix
+        text: value + this.suffix,
       });
   }
 
@@ -111,7 +111,7 @@ class Bar {
     this.backgroundColor = color;
     this.background.attr({
       fill: this.backgroundColor,
-      stroke: this.backgroundColor
+      stroke: this.backgroundColor,
     });
   }
 }

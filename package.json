@@ -1,20 +1,19 @@
 {
-  "dependencies": {
-    "@json-editor/json-editor": "^2.1.0",
-    "bootstrap": "^4.4.1",
-    "justgage": "^1.3.5",
-    "prettier": "1.18.2"
-  },
   "name": "hondash-frontend",
   "version": "1.0.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pablobuenaposada/HonDash.git"
+    "url": "git+https://github.com/pablobuenaposada/HonDash-frontend.git"
   },
   "author": "Pablo Buenaposada",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/pablobuenaposada/HonDash/issues"
+    "url": "https://github.com/pablobuenaposada/HonDash-frontend/issues"
   },
-  "homepage": "http://www.hondash.com"
+  "homepage": "https://www.hondash.com",
+  "dependencies": {
+    "@json-editor/json-editor": "^2.1.0",
+    "bootstrap": "^4.4.1",
+    "justgage": "^1.3.5"
+  }
 }

@@ -12,7 +12,7 @@ class Gauge {
       refreshAnimationTime: 0,
       gaugeColor: "#edebeb",
       labelFontColor: "black",
-      label: "GAUGE"
+      label: "GAUGE",
     };
 
     this.gauge = new JustGage(Object.assign({}, gaugeDefaults, args));
