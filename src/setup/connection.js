@@ -340,7 +340,7 @@ function reset() {
   ws.send(JSON.stringify({ action: "reset" }));
 }
 
-fetch("../../backend/devices/setup_validator/schema.json")
+fetch("/schema.json")
   .then((response) => response.json())
   .then((data) => {
     schema = data;
