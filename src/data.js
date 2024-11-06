@@ -3,7 +3,25 @@ var ws = new WebSocket(
   "ws://" + (window.location.hostname || "127.0.0.1") + ":5678/",
 );
 
-ws.onmessage = function (event) {
+let isProcessing = false;
+let lastEvent = null;
+
+async function processWebSocket() {
+  while (true) {
+    if (lastEvent && !isProcessing) {
+      const event = lastEvent;
+      isProcessing = true;
+
+      await processEvent(event);
+
+      isProcessing = false;
+      lastEvent = null;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1)); // small delay otherwise the loop gets crazy
+  }
+}
+
+async function processEvent(event) {
   var data = JSON.parse(event.data);
   var keys = Object.keys(data);
 
@@ -37,17 +55,23 @@ ws.onmessage = function (event) {
       }
     }
   }
+}
+
+ws.onmessage = function (event) {
+  lastEvent = event;
 };
 
 // asks for the setup as soon as possible
 ws.onopen = function (e) {
   ws.send(JSON.stringify({ action: "setup" }));
+  processWebSocket();
 };
 
 // in case something blows up or connection gets closed, keep trying
 ws.onerror = function (e) {
   location.reload();
 };
+
 ws.onclose = function (e) {
   location.reload();
 };
