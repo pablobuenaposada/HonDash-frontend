@@ -14,6 +14,9 @@ ws.onmessage = function (event) {
       for (var value in setup) {
         for (var option in setup[value]) {
           var method = "set" + option.charAt(0).toUpperCase() + option.slice(1);
+          if (value == "odo" && method == "setUnit") {
+            window["odo"].setSuffix(" " + setup["odo"]["unit"]);
+          }
           try {
             window[setup[value]["tag"]][method](setup[value][option]);
           } catch (e) {

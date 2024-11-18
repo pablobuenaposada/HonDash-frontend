@@ -6,13 +6,13 @@ class Vtec {
     this.pathMalfunction = "vtec_malfunction.svg";
     var img = document.createElement("img");
     img.src = "icons/" + this.pathOff;
-    img.style.width = "100%";
+    img.style.width = "80%";
     this.element.appendChild(img);
   }
 
   refresh(value) {
     var img = document.createElement("img");
-    img.style.width = "100%";
+    img.style.width = "80%";
     if (value == "on") {
       img.src = "icons/" + this.pathOn;
     } else if (value == "malfunction") {

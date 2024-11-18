@@ -3,8 +3,9 @@ class Text {
     this.element = document.getElementById(args.id);
     this.prefix = args.prefix || "";
     this.suffix = args.suffix || "";
+    this.shadow = args.shadow || false;
 
-    this.element.innerHTML = this.prefix + args.value + this.suffix;
+    this.element.innerHTML = this.prefix + (args.value || "-") + this.suffix;
     this.element.style.fontSize = args.size + "vw";
     this.element.style.fontFamily = args.font || "arial";
     this.element.style.fontWeight = args.weight || "bold";
@@ -22,7 +23,10 @@ class Text {
     }
   }
 
-  setColor(color) {
+  setColor(color, shadow) {
     this.element.style.color = color;
+    if (this.shadow) {
+      this.element.style.textShadow = `4px 4px 0px ${shadow}`;
+    }
   }
 }

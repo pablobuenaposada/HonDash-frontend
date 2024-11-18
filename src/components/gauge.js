@@ -1,58 +1,90 @@
 class Gauge {
   constructor(args) {
-    var gaugeDefaults = {
-      min: 0,
-      max: 100,
-      value: 0,
-      decimals: 0,
-      gaugeWidthScale: 1,
-      valueMinFontSize: 60,
-      labelMinFontSize: 20,
-      startAnimationTime: 0,
-      refreshAnimationTime: 100,
-      gaugeColor: "#edebeb",
-      labelFontColor: "black",
-      label: "GAUGE",
-    };
+    this.element = document.getElementById(args.id);
 
-    this.gauge = new JustGage(Object.assign({}, gaugeDefaults, args));
+    const fontSize = Math.min(
+      this.element.offsetWidth,
+      this.element.offsetHeight,
+    );
+
+    this.valueElement = document.createElement("span");
+    this.valueElement.style.fontSize = "5em";
+    this.valueElement.innerHTML = "-";
+    this.element.appendChild(this.valueElement);
+
+    this.labelElement = document.createElement("span");
+    this.labelElement.style.fontSize = "1.3em";
+    this.labelElement.innerHTML = args.id.toUpperCase();
+    this.labelElement.style.position = "absolute";
+    this.labelElement.style.bottom = "0px";
+
+    this.element.appendChild(this.labelElement);
+
+    this.decimals = 0;
+    this.sectors = [];
   }
 
   refresh(value) {
-    this.gauge.refresh(value);
+    const formattedValue = value.toFixed(this.decimals);
+    this.valueElement.innerHTML = formattedValue;
+    this.updateBackground(value);
+
+    const digitCount = this.countNumDigits(formattedValue);
+    let fontSize;
+    if (digitCount >= 7) {
+      fontSize = 2;
+    } else if (digitCount === 6 || digitCount === 5) {
+      fontSize = 2.8;
+    } else if (digitCount === 4) {
+      fontSize = 3.3;
+    } else if (digitCount === 3) {
+      fontSize = 4;
+    } else {
+      fontSize = 4.2;
+    }
+    this.valueElement.style.fontSize = `${fontSize}em`;
   }
 
   setSectors(sectors) {
-    this.gauge.config.customSectors = { length: true, ranges: sectors };
+    this.sectors = sectors;
   }
 
   setLabel(label) {
-    this.gauge.config.label = label;
-    this.gauge.txtLabel.attr({ text: this.gauge.config.label });
-  }
-
-  setMax(max) {
-    this.gauge.refresh(null, max);
+    this.labelElement.innerHTML = label;
   }
 
   setDecimals(decimals) {
-    this.gauge.config.decimals = decimals;
+    this.decimals = decimals;
   }
 
-  setTextColor(newColor) {
-    this.gauge.config.labelFontColor = newColor;
-    this.gauge.txtValue.attr({ fill: this.gauge.config.labelFontColor });
-
-    this.gauge.config.valueFontColor = newColor;
-    this.gauge.txtLabel.attr({ fill: this.gauge.config.valueFontColor });
-
-    this.gauge.txtMin.attr({ fill: this.gauge.config.labelFontColor });
-
-    this.gauge.txtMax.attr({ fill: this.gauge.config.labelFontColor });
+  setTextColor(color) {
+    this.valueElement.style.color = color;
+    this.labelElement.style.color = color;
   }
 
   setBackgroundColor(color) {
-    this.gauge.config.gaugeColor = color;
-    this.gauge.gauge.attr({ fill: this.gauge.config.gaugeColor });
+    this.element.style.border = `1px solid ${color}`;
+  }
+
+  countNumDigits(value) {
+    let count = value.replace(".", "").replace("-", "").length;
+    if (value.startsWith("-")) {
+      count++;
+    }
+    return count;
+  }
+
+  updateBackground(value) {
+    if (!this.sectors.length) return;
+
+    const currentSector = this.sectors.find(
+      (sector) => value >= sector.lo && value <= sector.hi,
+    );
+
+    if (currentSector) {
+      this.element.style.backgroundColor = currentSector.color;
+    } else {
+      this.element.style.backgroundColor = "transparent";
+    }
   }
 }

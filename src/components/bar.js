@@ -1,8 +1,6 @@
 class Bar {
   constructor(args) {
     var element = document.getElementById(args.id);
-    this.x = args.x || 0;
-    this.y = args.y || 0;
     this.width = element.offsetWidth;
     this.height = element.offsetHeight;
     this.isVertical = args.isVertical || false;
@@ -13,34 +11,30 @@ class Bar {
     this.suffix = args.suffix !== undefined ? args.suffix : "";
     this.textFont = args.textFont || "Arial";
     this.textWeight = args.textWeight || "bold";
-    this.textSize = args.textSize || 20;
+    this.textSize = this.height * 0.8;
     this.backgroundColor = args.backgroundColor || "#edebeb";
-    this.sectors = args.sectors || [];
+    this.sectors = [];
     this.decimals = args.decimals || 0;
 
     // Raphael paper object
     this.paper = Raphael(args.id);
 
     // Background
-    this.background = this.paper.rect(this.x, this.y, this.width, this.height);
+    this.background = this.paper.rect(0, 0, "100%", "100%");
     this.background.attr({
       fill: this.backgroundColor,
       stroke: this.backgroundColor,
     });
 
     // Bar fill & stroke
-    this.bar = this.paper.rect(this.x, this.y, this.width, this.height);
+    this.bar = this.paper.rect(0, 0, "100%", "100%");
     this.bar.attr({
       fill: this.getFillColor(this.minValue),
       stroke: this.getFillColor(this.minValue),
     });
 
     // Center the text on the Bar
-    this.text = this.paper.text(
-      this.width / 2 + this.x,
-      this.y + this.height / 2,
-      "",
-    );
+    this.text = this.paper.text(this.width / 2, this.height / 2, "");
 
     this.refresh(0);
   }
@@ -76,9 +70,8 @@ class Bar {
       );
     } else {
       const newHeight = (this.height * value) / this.maxValue;
-      const newY = this.y - newHeight + this.height;
       this.bar.animate(
-        { y: newY, height: newHeight, fill: color, stroke: color },
+        { height: newHeight, fill: color, stroke: color },
         100,
         "ease-in-out",
       );
