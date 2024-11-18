@@ -19,10 +19,13 @@ class Style {
       for (var name in window) {
         try {
           if (window[name].constructor.name == "Text") {
-            window[name].setColor(this.nightTextColor);
+            window[name].setColor(
+              this.nightTextColor,
+              this.nightBackgroundGaugeColor,
+            );
           } else if (window[name].constructor.name == "Gauge") {
             window[name].setTextColor(this.nightTextColor);
-            window[name].setBackgroundColor(this.nightBackgroundGaugeColor);
+            window[name].setBackgroundColor(this.nightTextColor);
           } else if (window[name].constructor.name == "Bar") {
             window[name].setBackgroundColor(this.nightBackgroundGaugeColor);
           }
@@ -34,10 +37,13 @@ class Style {
       for (var name in window) {
         try {
           if (window[name].constructor.name == "Text") {
-            window[name].setColor(this.dayTextColor);
+            window[name].setColor(
+              this.dayTextColor,
+              this.dayBackgroundGaugeColor,
+            );
           } else if (window[name].constructor.name == "Gauge") {
             window[name].setTextColor(this.dayTextColor);
-            window[name].setBackgroundColor(this.dayBackgroundGaugeColor);
+            window[name].setBackgroundColor(this.dayTextColor);
           } else if (window[name].constructor.name == "Bar") {
             window[name].setBackgroundColor(this.dayBackgroundGaugeColor);
           }

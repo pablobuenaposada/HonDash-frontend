@@ -5,13 +5,13 @@ class Icon {
     this.pathOn = "";
     var img = document.createElement("img");
     img.src = "icons/" + this.pathOff;
-    img.style.width = "100%";
+    img.style.height = "80%";
     this.element.appendChild(img);
   }
 
   refresh(value) {
     var img = document.createElement("img");
-    img.style.width = "100%";
+    img.style.height = "80%";
     img.src = "icons/" + (value > 0 ? this.pathOn : this.pathOff);
     this.element.innerHTML = "";
     this.element.appendChild(img);
