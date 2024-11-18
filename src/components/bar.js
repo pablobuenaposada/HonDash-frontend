@@ -56,9 +56,7 @@ class Bar {
   }
 
   refresh(value) {
-    value += 0; // Casting to int just in case
-
-    value = value.toFixed(this.decimals);
+    value = parseFloat(value.toFixed(this.decimals));
 
     value =
       value > this.maxValue
@@ -67,28 +65,33 @@ class Bar {
           ? this.minValue
           : value;
 
+    let color = this.getFillColor(value);
+
     if (this.isVertical) {
-      var color = this.getFillColor(value);
-      this.newWidth = (this.width * value) / this.maxValue;
-      this.bar.attr({ width: this.newWidth, fill: color, stroke: color });
+      const newWidth = (this.width * value) / this.maxValue;
+      this.bar.animate(
+        { width: newWidth, fill: color, stroke: color },
+        100,
+        "ease-in-out",
+      );
     } else {
-      var color = this.getFillColor(value);
-      this.newHeight = (this.height * value) / this.maxValue;
-      this.bar.attr({
-        y: this.y - this.newHeight + this.height,
-        height: this.newHeight,
-        fill: color,
-        stroke: color,
-      });
+      const newHeight = (this.height * value) / this.maxValue;
+      const newY = this.y - newHeight + this.height;
+      this.bar.animate(
+        { y: newY, height: newHeight, fill: color, stroke: color },
+        100,
+        "ease-in-out",
+      );
     }
 
-    this.enableTextValue &&
+    if (this.enableTextValue) {
       this.text.attr({
         "font-family": this.textFont,
         "font-size": this.textSize,
         "font-weight": this.textWeight,
         text: value + this.suffix,
       });
+    }
   }
 
   setDecimals(decimals) {

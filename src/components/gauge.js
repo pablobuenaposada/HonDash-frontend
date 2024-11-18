@@ -9,7 +9,7 @@ class Gauge {
       valueMinFontSize: 60,
       labelMinFontSize: 20,
       startAnimationTime: 0,
-      refreshAnimationTime: 0,
+      refreshAnimationTime: 100,
       gaugeColor: "#edebeb",
       labelFontColor: "black",
       label: "GAUGE",
