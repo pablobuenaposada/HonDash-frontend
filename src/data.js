@@ -1,3 +1,4 @@
+const target_values = ["o2"];
 var setup = undefined;
 var ws = new WebSocket(
   "ws://" + (window.location.hostname || "127.0.0.1") + ":5678/",
@@ -30,8 +31,16 @@ ws.onmessage = function (event) {
       for (var key in data["data"]) {
         // for all values
         try {
-          // if it's associated to a frontend tag
-          window[setup[key]["tag"]]["refresh"](data["data"][key]);
+          if (target_values.includes(key)) {
+            // values that have a target
+            window[setup[key]["tag"]]["refresh"](
+              data["data"][key],
+              data["data"][key + "_cmd"],
+            );
+          } else {
+            // values without a target
+            window[setup[key]["tag"]]["refresh"](data["data"][key]);
+          }
         } catch (e) {}
       }
     } else if (keys[0] == "action") {

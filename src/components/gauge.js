@@ -22,12 +22,13 @@ class Gauge {
 
     this.decimals = 0;
     this.sectors = [];
+    this.useTarget = false;
   }
 
-  refresh(value) {
+  refresh(value, target = null) {
     const formattedValue = value.toFixed(this.decimals);
     this.valueElement.innerHTML = formattedValue;
-    this.updateBackground(value);
+    this.updateBackground(value, target);
 
     const digitCount = this.countNumDigits(formattedValue);
     let fontSize;
@@ -62,6 +63,10 @@ class Gauge {
     this.labelElement.style.color = color;
   }
 
+  setTarget(value) {
+    this.useTarget = value;
+  }
+
   setBackgroundColor(color) {
     this.element.style.border = `1px solid ${color}`;
   }
@@ -74,8 +79,12 @@ class Gauge {
     return count;
   }
 
-  updateBackground(value) {
+  updateBackground(value, targetValue = null) {
     if (!this.sectors.length) return;
+
+    if (this.useTarget) {
+      value = value - targetValue;
+    }
 
     const currentSector = this.sectors.find(
       (sector) => value >= sector.lo && value <= sector.hi,
