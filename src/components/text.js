@@ -5,9 +5,10 @@ class Text {
     this.suffix = args.suffix || "";
     this.shadow = args.shadow || false;
 
+    this.element.classList.add("text");
     this.element.innerHTML = this.prefix + (args.value || "-") + this.suffix;
     this.element.style.fontSize = args.size + "vw";
-    this.element.style.fontFamily = args.font || "arial";
+    this.element.style.fontFamily = args.font || "";
     this.element.style.fontWeight = args.weight || "bold";
     this.element.style.fontStyle = args.style || "";
     this.element.style.textAlign = args.textAlign || "";
@@ -15,6 +16,10 @@ class Text {
 
   refresh(value) {
     this.element.innerHTML = this.prefix + value + this.suffix;
+  }
+
+  setValue(value) {
+    this.refresh(value);
   }
 
   setSuffix(suffix) {

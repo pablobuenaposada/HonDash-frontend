@@ -1,28 +1,50 @@
 class Gauge {
   constructor(args) {
     this.element = document.getElementById(args.id);
-
-    const fontSize = Math.min(
-      this.element.offsetWidth,
-      this.element.offsetHeight,
-    );
+    this.element.classList.add("gauge");
 
     this.valueElement = document.createElement("span");
-    this.valueElement.style.fontSize = "5em";
+    this.valueElement.className = "gauge__value";
     this.valueElement.innerHTML = "-";
     this.element.appendChild(this.valueElement);
 
     this.labelElement = document.createElement("span");
-    this.labelElement.style.fontSize = "1.3em";
+    this.labelElement.className = "gauge__label";
     this.labelElement.innerHTML = args.id.toUpperCase();
-    this.labelElement.style.position = "absolute";
-    this.labelElement.style.bottom = "0px";
-
     this.element.appendChild(this.labelElement);
 
     this.decimals = 0;
     this.sectors = [];
     this.useTarget = false;
+    this.valueScale = Gauge.scaleForDigits(1);
+
+    // everything is sized from the gauge height so it fits on any screen
+    this.scale();
+    if (window.ResizeObserver !== undefined) {
+      new ResizeObserver(() => this.scale()).observe(this.element);
+    } else {
+      window.addEventListener("resize", () => this.scale());
+    }
+  }
+
+  // portion of the gauge height taken by the value, the more digits the smaller
+  static scaleForDigits(digitCount) {
+    if (digitCount >= 7) {
+      return 0.24;
+    } else if (digitCount >= 5) {
+      return 0.34;
+    } else if (digitCount === 4) {
+      return 0.4;
+    } else if (digitCount === 3) {
+      return 0.48;
+    }
+    return 0.51;
+  }
+
+  scale() {
+    const height = this.element.offsetHeight;
+    this.valueElement.style.fontSize = height * this.valueScale + "px";
+    this.labelElement.style.fontSize = Math.max(10, height * 0.16) + "px";
   }
 
   refresh(value, target = null) {
@@ -30,20 +52,8 @@ class Gauge {
     this.valueElement.innerHTML = formattedValue;
     this.updateBackground(value, target);
 
-    const digitCount = this.countNumDigits(formattedValue);
-    let fontSize;
-    if (digitCount >= 7) {
-      fontSize = 2;
-    } else if (digitCount === 6 || digitCount === 5) {
-      fontSize = 2.8;
-    } else if (digitCount === 4) {
-      fontSize = 3.3;
-    } else if (digitCount === 3) {
-      fontSize = 4;
-    } else {
-      fontSize = 4.2;
-    }
-    this.valueElement.style.fontSize = `${fontSize}em`;
+    this.valueScale = Gauge.scaleForDigits(this.countNumDigits(formattedValue));
+    this.scale();
   }
 
   setSectors(sectors) {
@@ -68,7 +78,7 @@ class Gauge {
   }
 
   setBackgroundColor(color) {
-    this.element.style.border = `1px solid ${color}`;
+    this.element.style.setProperty("--gauge-line-rgb", rgbChannels(color));
   }
 
   countNumDigits(value) {
@@ -89,11 +99,23 @@ class Gauge {
     const currentSector = this.sectors.find(
       (sector) => value >= sector.lo && value <= sector.hi,
     );
+    // a see-through sector color means "nothing to report", plain gauge then
+    const color =
+      currentSector !== undefined && colorToRgb(currentSector.color) !== null
+        ? currentSector.color
+        : null;
 
-    if (currentSector) {
-      this.element.style.backgroundColor = currentSector.color;
+    if (color === null) {
+      this.element.style.removeProperty("--gauge-bg");
+      this.element.style.removeProperty("--gauge-line-alert-rgb");
+      this.element.classList.remove("gauge--alert");
     } else {
-      this.element.style.backgroundColor = "transparent";
+      this.element.style.setProperty("--gauge-bg", color);
+      this.element.style.setProperty(
+        "--gauge-line-alert-rgb",
+        rgbChannels(shadeColor(color, isDarkColor(color) ? 0.35 : -0.35)),
+      );
+      this.element.classList.add("gauge--alert");
     }
   }
 }

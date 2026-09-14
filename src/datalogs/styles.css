@@ -1,28 +1,95 @@
-* {
-  font-family: arial;
-  background-color: #1e1e1e;
-  color: whitesmoke;
+:root {
+  --bg: #1e1e1e;
+  --fg: whitesmoke;
+  --line: rgba(245, 245, 245, 0.12);
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: "Helvetica Neue", Helvetica, Arial, "DejaVu Sans", sans-serif;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+#title {
+  margin: 24px 0 20px;
+  font-size: 32px;
+  font-weight: bold;
+  letter-spacing: 0.02em;
+  text-align: center;
 }
 
 #tableDiv {
   margin: auto;
-  width: 50%;
+  width: 60%;
+  max-width: 700px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: rgba(245, 245, 245, 0.04);
 }
 
-#files tr,
-th,
-td {
+#files {
   width: 100%;
+  border-collapse: collapse;
 }
 
-#td {
-  font-weight: normal;
+#files th {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: left;
+  opacity: 0.55;
 }
 
-#filename:hover {
+#files td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  font-size: 17px;
+}
+
+#files tr:last-child td {
+  border-bottom: none;
+}
+
+/* file name, the one that downloads the datalog when clicked */
+#files td[id="filename"] {
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+
+#files td[id="filename"]:hover,
+#files td[id="filename"]:active {
   background-color: #356735;
 }
 
-#title {
+/* duration */
+#files td:nth-child(2) {
+  width: 1%;
+  white-space: nowrap;
+  opacity: 0.7;
+}
+
+/* remove button */
+#files td:last-child {
+  width: 1%;
+  cursor: pointer;
+  font-size: 15px;
   text-align: center;
+  filter: grayscale(0.55);
+  transition: filter 120ms ease;
+}
+
+#files td:last-child:hover,
+#files td:last-child:active {
+  filter: none;
 }

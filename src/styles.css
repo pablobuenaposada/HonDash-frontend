@@ -1,23 +1,178 @@
+/* the setup drives the colors, these are just the fallbacks until it arrives */
+:root {
+  --bg: #ffffff;
+  --bg-rgb: 255, 255, 255;
+  --fg: #111111;
+  --fg-rgb: 17, 17, 17;
+  --radius: 12px;
+  --bar-radius: 0px; /* set it to var(--radius) for rounded bars */
+  --font: arial, "Liberation Sans", "DejaVu Sans", sans-serif;
+}
+
 html,
 body {
   height: 100%;
   cursor: none;
+  overflow: hidden;
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  /* digits keep the same width so the numbers do not dance around */
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  -webkit-font-smoothing: antialiased;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
-div[id^="gauge"] {
-  font-family: arial;
-  font-weight: bold;
+.text {
+  line-height: 1;
+  transition: color 200ms ease;
+}
+
+#gear-label,
+.gauge__label {
+  letter-spacing: 0.14em;
+  opacity: 0.6;
+  text-transform: uppercase;
+}
+
+#time,
+#odo {
+  opacity: 0.85;
+}
+
+/* version, ecu and firmware line at the bottom */
+#version,
+#ecu_name,
+#firmware_version {
+  letter-spacing: 0.08em;
+  opacity: 0.45;
+}
+
+/* Gauges */
+.gauge {
+  position: relative;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
+  overflow: hidden;
   margin: 3px;
+  border: 2px solid rgba(var(--gauge-line-rgb, var(--fg-rgb)), 0.22);
+  border-radius: var(--radius);
+  background-color: var(--gauge-bg, rgba(var(--fg-rgb), 0.05));
+  line-height: 1;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease;
 }
 
-div[id^="bar"] > svg {
-  display: block;
+.gauge--alert {
+  border-color: rgba(var(--gauge-line-alert-rgb, var(--fg-rgb)), 0.55);
 }
 
-[class*="col"] {
-  /*border: 1px solid red;*/
+.gauge__value {
+  font-weight: bold;
+  letter-spacing: -0.03em;
+  transition:
+    color 200ms ease,
+    font-size 120ms ease;
+}
+
+.gauge__label {
+  margin-top: 0.35em;
+  font-weight: bold;
+  transition: color 200ms ease;
+}
+
+/* Bars */
+.bar {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--bar-radius);
+  transition: background-color 200ms ease;
+}
+
+.bar__fill {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+  /* no sector color configured, still show something on the track */
+  background-color: var(
+    --bar-color,
+    rgba(var(--bar-ink-rgb, var(--fg-rgb)), 0.4)
+  );
+  /* a bit of relief on top of the flat sector color */
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.22),
+    rgba(255, 255, 255, 0) 45%,
+    rgba(0, 0, 0, 0.14)
+  );
+  transition:
+    width 120ms linear,
+    height 120ms linear,
+    background-color 200ms linear;
+}
+
+.bar--upright .bar__fill {
+  width: 100%;
+  height: 0;
+}
+
+.bar__text {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* last sector of the bar, redline on a rpm bar: flashes like a shift light */
+.bar--alert::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background-color: var(--bar-color, transparent);
+  /* only the opacity is animated, cheap enough for a raspberry */
+  animation: bar-alert 200ms infinite;
+}
+
+@keyframes bar-alert {
+  0%,
+  35% {
+    opacity: 1;
+  }
+  35.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Icons */
+.icon {
+  transition:
+    opacity 150ms ease,
+    filter 150ms ease;
+}
+
+/* an icon that is off should be there but barely noticeable */
+.icon--off {
+  filter: brightness(0.92);
+}
+
+body[data-theme="night"] .icon--off {
+  filter: brightness(0.3);
 }

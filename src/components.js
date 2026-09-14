@@ -1,7 +1,7 @@
 // Bars
-var bar1 = new Bar({ id: "bar1", isVertical: true, textSize: 60 });
-var bar2 = new Bar({ id: "bar2", isVertical: true, textSize: 30 });
-var bar3 = new Bar({ id: "bar3", isVertical: true, textSize: 20 });
+var bar1 = new Bar({ id: "bar1", isVertical: true, highlightTopSector: true });
+var bar2 = new Bar({ id: "bar2", isVertical: true });
+var bar3 = new Bar({ id: "bar3", isVertical: true, textScale: 0.7 });
 
 // Text and numbers
 var speed = new Text({

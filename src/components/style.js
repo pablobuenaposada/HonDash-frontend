@@ -13,42 +13,46 @@ class Style {
     if (this.currentStyle == value && force == false) {
       return;
     }
-    if (value == "night") {
-      this.currentStyle = value;
-      document.body.style.backgroundColor = this.nightBackgroundColor;
-      for (var name in window) {
-        try {
-          if (window[name].constructor.name == "Text") {
-            window[name].setColor(
-              this.nightTextColor,
-              this.nightBackgroundGaugeColor,
-            );
-          } else if (window[name].constructor.name == "Gauge") {
-            window[name].setTextColor(this.nightTextColor);
-            window[name].setBackgroundColor(this.nightTextColor);
-          } else if (window[name].constructor.name == "Bar") {
-            window[name].setBackgroundColor(this.nightBackgroundGaugeColor);
-          }
-        } catch (error) {}
-      }
-    } else if (value == "day") {
-      this.currentStyle = value;
-      document.body.style.backgroundColor = this.dayBackgroundColor;
-      for (var name in window) {
-        try {
-          if (window[name].constructor.name == "Text") {
-            window[name].setColor(
-              this.dayTextColor,
-              this.dayBackgroundGaugeColor,
-            );
-          } else if (window[name].constructor.name == "Gauge") {
-            window[name].setTextColor(this.dayTextColor);
-            window[name].setBackgroundColor(this.dayTextColor);
-          } else if (window[name].constructor.name == "Bar") {
-            window[name].setBackgroundColor(this.dayBackgroundGaugeColor);
-          }
-        } catch (error) {}
-      }
+    if (value != "night" && value != "day") {
+      return;
+    }
+
+    this.currentStyle = value;
+    const backgroundColor =
+      value == "night" ? this.nightBackgroundColor : this.dayBackgroundColor;
+    const textColor =
+      value == "night" ? this.nightTextColor : this.dayTextColor;
+    const gaugeColor =
+      value == "night"
+        ? this.nightBackgroundGaugeColor
+        : this.dayBackgroundGaugeColor;
+
+    // the stylesheet takes care of the decoration (borders, dimmed icons...)
+    // out of these, so it always matches the colors coming from the setup
+    document.body.dataset.theme = value;
+    document.documentElement.style.setProperty("--bg", backgroundColor);
+    document.documentElement.style.setProperty(
+      "--bg-rgb",
+      rgbChannels(backgroundColor),
+    );
+    document.documentElement.style.setProperty("--fg", textColor);
+    document.documentElement.style.setProperty(
+      "--fg-rgb",
+      rgbChannels(textColor),
+    );
+    document.body.style.backgroundColor = backgroundColor;
+
+    for (var name in window) {
+      try {
+        if (window[name].constructor.name == "Text") {
+          window[name].setColor(textColor, gaugeColor);
+        } else if (window[name].constructor.name == "Gauge") {
+          window[name].setTextColor(textColor);
+          window[name].setBackgroundColor(textColor);
+        } else if (window[name].constructor.name == "Bar") {
+          window[name].setBackgroundColor(gaugeColor);
+        }
+      } catch (error) {}
     }
   }
 

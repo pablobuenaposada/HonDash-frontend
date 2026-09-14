@@ -1,52 +1,83 @@
 class Bar {
   constructor(args) {
-    var element = document.getElementById(args.id);
-    this.width = element.offsetWidth;
-    this.height = element.offsetHeight;
-    this.isVertical = args.isVertical || false;
+    this.element = document.getElementById(args.id);
+    this.isVertical = args.isVertical || false; // true -> grows to the right
     this.minValue = args.minValue || 0;
     this.maxValue = args.maxValue || 100;
     this.enableTextValue =
       args.enableTextValue !== undefined ? args.enableTextValue : true;
     this.suffix = args.suffix !== undefined ? args.suffix : "";
-    this.textFont = args.textFont || "Arial";
+    this.textFont = args.textFont || "";
     this.textWeight = args.textWeight || "bold";
-    this.textSize = this.height * 0.8;
+    this.textScale = args.textScale || 0.8; // portion of the bar height
+    this.highlightTopSector = args.highlightTopSector || false;
     this.backgroundColor = args.backgroundColor || "#edebeb";
     this.sectors = [];
     this.decimals = args.decimals || 0;
 
-    // Raphael paper object
-    this.paper = Raphael(args.id);
+    this.element.classList.add("bar");
+    this.element.classList.toggle("bar--upright", !this.isVertical);
+    this.element.innerHTML = "";
 
-    // Background
-    this.background = this.paper.rect(0, 0, "100%", "100%");
-    this.background.attr({
-      fill: this.backgroundColor,
-      stroke: this.backgroundColor,
-    });
+    // the value is drawn twice, once under the fill and once clipped inside it,
+    // so every digit contrasts with whatever is behind it
+    this.text = this.buildText();
+    this.element.appendChild(this.text);
 
-    // Bar fill & stroke
-    this.bar = this.paper.rect(0, 0, "100%", "100%");
-    this.bar.attr({
-      fill: this.getFillColor(this.minValue),
-      stroke: this.getFillColor(this.minValue),
-    });
+    this.fill = document.createElement("div");
+    this.fill.className = "bar__fill";
+    this.filledText = this.buildText();
+    this.fill.appendChild(this.filledText);
+    this.element.appendChild(this.fill);
 
-    // Center the text on the Bar
-    this.text = this.paper.text(this.width / 2, this.height / 2, "");
+    this.setBackgroundColor(this.backgroundColor);
+
+    // the text has to stay proportional to the bar whatever its size is
+    this.scaleText();
+    if (window.ResizeObserver !== undefined) {
+      new ResizeObserver(() => this.scaleText()).observe(this.element);
+    } else {
+      window.addEventListener("resize", () => this.scaleText());
+    }
 
     this.refresh(0);
   }
 
+  buildText() {
+    const text = document.createElement("div");
+    text.className = "bar__text";
+    text.style.fontFamily = this.textFont;
+    text.style.fontWeight = this.textWeight;
+    return text;
+  }
+
+  scaleText() {
+    const width = this.element.offsetWidth;
+    const height = this.element.offsetHeight;
+    [this.text, this.filledText].forEach((text) => {
+      text.style.fontSize = height * this.textScale + "px";
+      // the clipped copy has to keep the size of the whole bar to stay aligned
+      text.style.width = width + "px";
+      text.style.height = height + "px";
+    });
+  }
+
   getFillColor(value) {
-    if (this.sectors.length > 0) {
-      for (var i = 0; i < this.sectors.length; i++) {
-        if (value >= this.sectors[i].lo && value <= this.sectors[i].hi) {
-          return this.sectors[i].color;
-        }
+    for (var i = 0; i < this.sectors.length; i++) {
+      if (value >= this.sectors[i].lo && value <= this.sectors[i].hi) {
+        return this.sectors[i].color;
       }
     }
+    return null;
+  }
+
+  // last sector of the scale, the redline on a rpm bar
+  isOnTopSector(value) {
+    if (this.sectors.length < 2) {
+      return false;
+    }
+    const top = this.sectors.reduce((a, b) => (a.hi > b.hi ? a : b));
+    return value >= top.lo && value <= top.hi;
   }
 
   refresh(value) {
@@ -59,31 +90,25 @@ class Bar {
           ? this.minValue
           : value;
 
-    let color = this.getFillColor(value);
+    const span = this.maxValue - this.minValue || 1;
+    const percentage = ((value - this.minValue) * 100) / span;
+    this.fill.style[this.isVertical ? "width" : "height"] = percentage + "%";
 
-    if (this.isVertical) {
-      const newWidth = (this.width * value) / this.maxValue;
-      this.bar.animate(
-        { width: newWidth, fill: color, stroke: color },
-        100,
-        "ease-in-out",
-      );
-    } else {
-      const newHeight = (this.height * value) / this.maxValue;
-      this.bar.animate(
-        { height: newHeight, fill: color, stroke: color },
-        100,
-        "ease-in-out",
-      );
+    const color = this.getFillColor(value);
+    if (color !== null) {
+      this.fill.style.backgroundColor = color;
+      this.filledText.style.color = contrastingColor(color);
+      this.element.style.setProperty("--bar-color", color);
     }
 
+    this.element.classList.toggle(
+      "bar--alert",
+      this.highlightTopSector && this.isOnTopSector(value),
+    );
+
     if (this.enableTextValue) {
-      this.text.attr({
-        "font-family": this.textFont,
-        "font-size": this.textSize,
-        "font-weight": this.textWeight,
-        text: value + this.suffix,
-      });
+      this.text.textContent = value + this.suffix;
+      this.filledText.textContent = value + this.suffix;
     }
   }
 
@@ -105,9 +130,10 @@ class Bar {
 
   setBackgroundColor(color) {
     this.backgroundColor = color;
-    this.background.attr({
-      fill: this.backgroundColor,
-      stroke: this.backgroundColor,
-    });
+    this.element.style.backgroundColor = color;
+    // the value needs to be visible on whatever track color the setup picks
+    const readable = contrastingColor(color);
+    this.text.style.color = readable;
+    this.element.style.setProperty("--bar-ink-rgb", rgbChannels(readable));
   }
 }
